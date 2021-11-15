@@ -2,9 +2,7 @@
 
 import CMark
 import Control.Monad
-import qualified Data.ByteString as B
 import Data.Text
-import Data.Typeable (typeOf)
 import Network.HTTP
 import Network.Socket
 import Network.URI
@@ -22,7 +20,7 @@ readLocalFile filePath = do
   contents <- hGetContents handle
   return (contents, handle)
 
-main :: IO b
+main :: IO ()
 main = do
   sock <- socket AF_INET Stream defaultProtocol
   let hints = defaultHints {addrFlags = [AI_NUMERICHOST], addrSocketType = Stream}

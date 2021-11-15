@@ -1,25 +1,25 @@
 # Web server in Haskell
+
     A simple web server in Haskell
 
-## Build:
+## Build
 
-```
-stack build
-```
+```stack build```
+
 or
-```
-stack haddock
-```
+
+```stack haddock```
+
 > to compile with haddock
 
-## Run:
-```
-stack exec ryn
-```
+## Run
+
+```stack exec ryn```
+
 > on Linux/macOS environment
 
 or
-```
-stack exec ryn.exe
-```
+
+```stack exec ryn.exe```
+
 > on Windows environment

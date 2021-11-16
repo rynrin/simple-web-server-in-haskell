@@ -36,7 +36,7 @@ Just x // _ = x
 Nothing // y = y
 -- ^ Try something new
 
-startServer :: ServerConfigs -> IO b
+startServer :: ServerConfigs -> IO ()
 startServer ServerConfigs {..} = do
   sock <- socket AF_INET Stream defaultProtocol
   let hints = defaultHints {addrFlags = [AI_NUMERICHOST], addrSocketType = Stream}

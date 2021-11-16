@@ -1,4 +1,5 @@
 -- #!/usr/bin/env stack
+{-# LANGUAGE RecordWildCards #-}
 
 import CMark
 import Control.Monad
@@ -20,18 +21,35 @@ readLocalFile filePath = do
   contents <- hGetContents handle
   return (contents, handle)
 
-main :: IO ()
-main = do
+newtype ServerConfigs = ServerConfigs
+  { _port :: Port Int
+  }
+
+defaultServerConfigs :: ServerConfigs
+defaultServerConfigs = ServerConfigs {_port = Just 8000}
+
+type Port = Maybe
+
+-- | A flip fromMaybe
+(//) :: Maybe a -> a -> a
+Just x // _ = x
+Nothing // y = y
+-- ^ Try something new
+
+startServer :: ServerConfigs -> IO b
+startServer ServerConfigs {..} = do
   sock <- socket AF_INET Stream defaultProtocol
   let hints = defaultHints {addrFlags = [AI_NUMERICHOST], addrSocketType = Stream}
-  addr : _ <- getAddrInfo (Just hints) (Just "127.0.0.1") (Just "8080")
+  let defaultPort = 8080
+  let customPort = return $ show $ _port // defaultPort
+  addr : _ <- getAddrInfo (Just hints) (Just "127.0.0.1") customPort
   let address = addrAddress addr
   putStrLn $ "Server is listening at http://" <> show address
   bind sock $ addrAddress addr
   listen sock 1
   forever $ do
     (csock, _) <- accept sock
-    hs <- socketConnection "" 8080 csock
+    hs <- socketConnection "" (_port // defaultPort) csock
     req <- receiveHTTP hs
     case req of
       Left _ -> do
@@ -58,3 +76,6 @@ main = do
                 hClose handle
                 Network.HTTP.close hs
             )
+
+main :: IO ()
+main = startServer defaultServerConfigs
